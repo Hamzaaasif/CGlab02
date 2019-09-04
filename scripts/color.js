@@ -3,9 +3,8 @@ window.onload = myInit();
 let yAxis=false;
 let activeColor='red';
 
-document.addEventListener("DOMContentLoaded",function(event){
-    myInit();
-})
+
+
 function myInit()
 {  
     //alert("inside myInit Function");
@@ -15,50 +14,26 @@ function myInit()
     });
     //myDisplay();
 }
-function handleFiles()
-{
-    var theGoods=document.getElementById("imageFile").files[0];
-    var image=new Image();
-    var reader=new FileReader();
 
-    reader.addEventListener("load",function(){image.src=reader.result;});
-    image.onload=function(){calcAndGraph(image)};
-    if(theGoods){reader.readAsDataURL(theGoods);}
-}
-function calcAndGraph(img)
-{
-    let rD={},gD={},bD={};
-    let cv=document.getElementById("mycanvas")
-    let ctx=cv.getContext("2d");
-    if(img.width>640 && img.width >480)
-    {
-    img.width=400;
-    img.height=540;
-    }
-    cv.width=img.width;
-    cv.height=img.height;
-    ctx.drawImage(img,0,0,cv.width,cv.height);
-    const iD=ctx.getImageData(0,0,cv.width,cv.height).data;
-    for (var i=0; i<256; i++) { rD[i]=0; gD[i]=0; bD[i]=0; }
-    for (var i=0;i<iD.length;i+=4)
-{
-    rD[iD[i]]++;
-    gD[iD[i+1]]++;
-    bD[iD[i+2]]++;
-}
-histogram({rD,gD,bD});
-}
+
+document.addEventListener("DOMContentLoaded",function(event){
+    var image=new Image();
+    image.onload=function(){calcAndGraph(image);}
+    image.src='basketball.jpg';
+    myInit();
+})
+
 function histogram(data)
 {
     let W=800;
-    let H= W/2;
+    let H= W/1.8;
     const svg = d3.select('svg');
-    const margin = {top:20, right:20, bottom:30, left:50};
-    const width =W-margin.left-margin.right;
-    const height =H-margin.top-margin.bottom;
+    const margin = {top: 20, right: 20, bottom: 30, left: 50};
+    const width =W - margin.left - margin.right;
+    const height =H -margin.top -margin.bottom;
     let q = document.querySelector('svg');
-    q.style.width=width;
-    q.style.height=height;
+    q.style.width=W;
+    q.style.height=H;
     if(yAxis){d3.selectAll("g.y-axis").remove();yAxis=false}
     function graphComponent(data, color)
     {
@@ -66,19 +41,19 @@ function histogram(data)
         var data = Object.keys(data).map(function(key){return {freq:data[key], idx:+key}});
         var x = d3.scaleLinear()
                 .range([0,width])
-                .domain([0,d3.max(data, function(d){return d.idx;})]);
+                .domain([0, d3.max(data, function(d){return d.idx;})]);
         var y=d3.scaleLinear()
             .range([height,0])
             .domain([0,d3.max(data,function(d){return d.freq;})]);
-        varg = svg.append("g")
+        var g = svg.append("g")
            .attr("transform","translate("+margin.left+","+margin.top+")");
         if(!yAxis)
         {
-            yAzis=true;
-            g,append("g")
+            yAxis=true;
+            g.append("g")
             .attr("class","y-axis")
-            .attr("transform","translate("+ -5 + ",0")
-            .call(d3.axisLeft(y).ticks(10).tickSizeInner(10).tickSizaOuter(2));
+            .attr("transform","translate("+ -2 + ",0")
+            .call(d3.axisLeft(y).ticks(10).tickSizeInner(10).tickSizeOuter(2));
         }
         g.selectAll(".bar-"+color)
           .data(data)
@@ -96,10 +71,58 @@ function histogram(data)
     graphComponent(data.rD,"red");
 
 }
+
+
+
+
+function handleFiles()
+{
+    var theGoods=document.getElementById("imageFile").files[0];
+    var image=new Image();
+    var reader=new FileReader();
+
+    reader.addEventListener("load",function(){image.src=reader.result;});
+    if(theGoods){reader.readAsDataURL(theGoods);}
+    image.onload=function(){calcAndGraph(image)};
+    
+}
+
+
+
+function calcAndGraph(img)
+{
+    let rD={},gD={},bD={};
+    let cv=document.getElementById("mycanvas")
+    let ctx=cv.getContext("2d");
+    if(img.width>640 && img.width >480)
+    {
+    img.width=400;
+    img.height=540;
+    }
+    cv.width=img.width;
+    cv.height=img.height;
+    ctx.drawImage(img,0,0,cv.width,cv.height);
+    let pixelSum={};
+    const iD=ctx.getImageData(0 , 0, cv.width, cv.height).data;
+    for (var i=0; i<256; i++) { rD[i]=0; gD[i]=0; bD[i]=0; }
+    for(var i=0;i<765;i++) {pixelSum[i]=0; }
+    for (var i=0;i<iD.length;i+=4)
+{
+    rD[iD[i]]++;
+    gD[iD[i+1]]++;
+    bD[iD[i+2]]++;
+}
+
+  histogram({pixelSum,rD,gD,bD});
+
+}
+
+
+
 function amplify(e)
 {
     const colors = ['red','green','blue'];
-    const boosts=e.target.id;
+    const boost=e.target.id;
     if(boost=='blend')
     {
         document.querySelectorAll('rect').forEach(bar=>{
@@ -120,6 +143,10 @@ function amplify(e)
         });
     }
 }
+
+
+
+
 function myDisplay()
 {
     console.log("My display Function");
@@ -161,7 +188,7 @@ path.rect(50,20,300,120);
 path.rect(160,85,60,32);
 path.closePath();
 
-ctx.fillStyle="#FFF000"
+ctx.fillStyle="#FFFFFF"
 ctx.fillStyle="rgha(225,225,225,0.5)"
 ctx.fill(path)
 ctx.lineWidth=
