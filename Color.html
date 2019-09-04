@@ -8,8 +8,18 @@
 
 <h1> Hill ImageTpes,Bitwiswe operations , color theory </h1>
 
-<input type="file" id="imageFile" accept=".png, .jpg, .jpeg"></input>
-<canvas id="mycanvas" width="640"  height="480" style="border:1px solid">
+<div id="row">
+ <input type="file" id="imageFile" accept=".png, .jpg, .jpeg"></input>
+ <button id="red" class="focuser">++R</button>
+ <button id="green" class="focuser">++G</button>
+ <button id="blue" class="focuser">++B</button>
+ <button id="blend" class="focuser">Blend</button>
+</div>
+<div>
+  <div id="row"><svg width="1" height="1"></svg></div>
+  <div id="row"><canvas id="mycanvas" width="640"  height="480" style="border:1px solid"></canvas></div>
+</div>
+  
 <p> Default Content </p>
 </canvas>
 
